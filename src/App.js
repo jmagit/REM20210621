@@ -4,8 +4,8 @@ import Demo from './demos';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
+    <div>
+      <header className="App App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <h1>Hola mundo</h1>
         <p>
@@ -20,7 +20,9 @@ function App() {
           Learn React
         </a>
       </header>
-      <Demo />
+      <div class="container-fluid">
+        <Demo nombre="App" />
+      </div>
     </div>
   );
 }
