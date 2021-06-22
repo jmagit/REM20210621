@@ -20,7 +20,7 @@ function App() {
           Learn React
         </a>
       </header>
-      <div class="container-fluid">
+      <div className="container-fluid">
         <Demo nombre="App" />
       </div>
     </div>
