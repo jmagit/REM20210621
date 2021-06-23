@@ -61,64 +61,45 @@ export default class Calculadora extends Component {
   }
 
   render() {
+    let cabecera = [];
+    if(this.state.resumen) {
+      cabecera.push(<Resumen resumen={this.state.resumen} coma={this.props.coma} />)
+    }
+    cabecera.push(<Pantalla pantalla={this.state.pantalla} coma={this.props.coma} />)
     return (
       <table className="Calculadora">
         <thead>
-          {this.state.resumen && <Resumen resumen={this.state.resumen} />}
-          <Pantalla pantalla={this.state.pantalla} coma={this.props.coma} />
+        <Resumen resumen={this.state.resumen} />
+        <Pantalla pantalla={this.state.pantalla} coma={this.props.coma} />
         </thead>
         <tbody>
           <tr>
             <BtnCalcular css="btnOperar" texto="CE" onClick={this.inicia} />
-            <BtnCalcular
-              css="btnOperar"
-              texto="Borrar"
-              onClick={this.borrar}
-              colSpan="2"
-            />
+            <BtnCalcular css="btnOperar" texto="Borrar" onClick={this.borrar} colSpan="2" />
             <BtnCalcular css="btnOperar" texto="+" onClick={this.calcula} />
           </tr>
           <tr>
             {[7, 8, 9].map(item => (
-              <BtnCalcular
-                key={"btn" + item}
-                css="btnDigito"
-                texto={item}
-                onClick={this.ponDijito}
-              />
+              <BtnCalcular key={"btn" + item} css="btnDigito" texto={item} onClick={this.ponDijito} />
             ))}
             <BtnCalcular css="btnOperar" texto="-" onClick={this.calcula} />
           </tr>
           <tr>
             {[4, 5, 6].map(item => (
-              <BtnCalcular
-                key={"btn" + item}
-                css="btnDigito"
-                texto={item}
-                onClick={this.ponDijito}
-              />
-            ))}
+              <BtnCalcular key={"btn" + item} css="btnDigito" texto={item} onClick={this.ponDijito} />
+              ))}
             <BtnCalcular css="btnOperar" texto="*" onClick={this.calcula} />
           </tr>
           <tr>
             {[1, 2, 3].map(item => (
-              <BtnCalcular
-                key={"btn" + item}
-                css="btnDigito"
-                texto={item}
-                onClick={this.ponDijito}
-              />
-            ))}
+              <BtnCalcular key={"btn" + item} css="btnDigito" texto={item} onClick={this.ponDijito} />
+              ))}
             <BtnCalcular css="btnOperar" texto="/" onClick={this.calcula} />
           </tr>
           <tr>
             <BtnCalcular css="btnDigito" texto="±" onClick={this.cambiaSigno} />
             <BtnCalcular css="btnDigito" texto="0" onClick={this.ponDijito} />
-            <BtnCalcular
-              css="btnDigito"
-              texto={this.props.coma ? "," : "."}
-              onClick={this.ponComa}
-            />
+            <BtnCalcular css="btnDigito" texto={this.props.coma ? "," : "."} onClick={this.ponComa} />
             <BtnCalcular css="btnOperar" texto="=" onClick={this.calcula} />
           </tr>
         </tbody>
@@ -182,40 +163,38 @@ export default class Calculadora extends Component {
     }
   }
 
-  calcula(value) {
-    if ("+-*/=".indexOf(value) === -1) {
-      console.error(`Operacion no soportada: ${value}`);
+  calcula(nuevo) {
+    if ("+-*/=".indexOf(nuevo) === -1) {
+      console.error(`Operacion no soportada: ${nuevo}`);
       return;
     }
-
-    this.setState((prev, props) => {
-      if(this.limpiar) return;
-      const operando = parseFloat(prev.pantalla);
-      switch (this.operador) {
-        case "+":
-          this.acumulado += operando;
-          break;
-        case "-":
-          this.acumulado -= operando;
-          break;
-        case "*":
-          this.acumulado *= operando;
-          break;
-        case "/":
-          this.acumulado /= operando;
-          break;
-        case "=":
-        default:
-          break;
-      }
-      // Con eval()
-      // acumulado = eval (acumulado + this.operador + prev.pantalla);
-      let resumen = value === "=" ? "" : prev.resumen + prev.pantalla + value;
-      let pantalla = this.acumulado.toString();
-      this.operador = value;
-      this.limpiar = true;
-      if (this.props.onChange) this.props.onChange(this.acumulado);
-      return { pantalla: pantalla, resumen: resumen };
-    });
+    let pantalla = this.state.pantalla;
+    let resumen = this.state.resumen;
+    const operando = parseFloat(pantalla);
+    switch (this.operador) {
+      case "+":
+        this.acumulado += operando;
+        break;
+      case "-":
+        this.acumulado -= operando;
+        break;
+      case "*":
+        this.acumulado *= operando;
+        break;
+      case "/":
+        this.acumulado /= operando;
+        break;
+      case "=":
+      default:
+        break;
+    }
+    // Con eval()
+    // acumulado = eval (acumulado + this.operador + pantalla);
+    resumen = nuevo === "=" ? "" : resumen + pantalla + nuevo;
+    pantalla = this.acumulado.toString();
+    this.operador = nuevo;
+    this.limpiar = true;
+    if (this.props.onChange) this.props.onChange(this.acumulado);
+    this.setState({ pantalla, resumen });
   }
 }

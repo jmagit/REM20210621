@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, useState } from 'react'
 import PropTypes from 'prop-types';
 
 export default class Contador extends Component {
@@ -46,4 +46,19 @@ Contador.propTypes = {
     delta: PropTypes.any,
     onCambia: PropTypes.func
   };
+  
+  export function ContadorFunc(props) {
+    const [contador, setContador] = useState(props.init ?? 0);
+    return (
+      <div>
+        <h1 data-testid="pantalla">{contador}</h1>
+        <p>
+          <input type="button" value="-" 
+            onClick={() => setContador(contador - 1)} />
+          <input type="button" value="+" 
+            onClick={() => setContador(contador + 1)} />
+        </p>
+      </div>
+    );
+  }
   

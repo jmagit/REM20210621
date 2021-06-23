@@ -1,12 +1,19 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types';
-import Contador from './contador';
+import Contador, { ContadorFunc } from './contador';
 import Calculadora from './calculadora';
-import {ErrorBoundary} from './comunes';
+import { ErrorBoundary, Coordenadas, useCoordenadas } from './comunes';
+import { Link } from 'react-router-dom';
 
 
 function Saluda(props) {
-    return <h1>Hola {props.nombre}</h1>;
+    const coordenadas = useCoordenadas();
+    return <div>
+        <h1>Hola {props.nombre}</h1>
+        <h2>Latitud: {coordenadas.latitud}</h2>
+        <h2>Longitud: {coordenadas.longitud}</h2>
+    </div>
+        ;
 }
 
 
@@ -17,7 +24,7 @@ class Despide extends Component {
     }
     repite() {
         let rslt = [];
-        for(let i = 0; i < (this.veces); i++) {
+        for (let i = 0; i < (this.veces); i++) {
             rslt.push(<li key={i}>Adios {this.props.nombre}</li>);
 
         }
@@ -29,7 +36,7 @@ class Despide extends Component {
             <div>
                 <p><b>Nº Veces: </b> {this.veces}</p>
                 <ol>
-                {this.repite()}
+                    {this.repite()}
                 </ol>
             </div>
         );
@@ -49,13 +56,18 @@ export default class Demo extends Component {
     render() {
         return (
             <React.Fragment>
+                <Coordenadas />
+                <Link to="/muro">muro</Link> | 
+                <Link to="muro">mal</Link> | 
+                <a href="/muro">Peor</a>
+                <ContadorFunc init={18} />
                 <Calculadora coma={true} />
                 <ErrorBoundary>
-                    <Contador init={this.state.resultado} delta={2} onCambia={(value) => this.setState({resultado: value}) } />
+                    <Contador init={this.state.resultado} delta={2} onCambia={(value) => this.setState({ resultado: value })} />
                 </ErrorBoundary>
                 {/* <input type="text" value={this.state.resultado} /> */}
                 El resultado es {this.state.resultado}
-                <input type="button" value="cambia" onClick={() => this.setState({resultado: 100})} />
+                <input type="button" value="cambia" onClick={() => this.setState({ resultado: 100 })} />
                 <Saluda nombre="Don Pepito" />
                 <Saluda nombre="Don Jose" />
                 <Saluda />
