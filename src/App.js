@@ -3,15 +3,16 @@ import logo from './logo.svg';
 import './App.css';
 import Demo from './demos';
 import FotoMuro from './muro';
-import Contador from './contador';
+import Contador, { CounterStored} from './contador';
 // import { Navbar, NavbarBrand, NavbarToggler, Collapse, Nav, NavItem, NavLink } from 'reactstrap';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import Container from 'react-bootstrap/Container';
 import Formulario from './formulario';
-import { BrowserRouter as Router, Switch, Route, Link, Redirect } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route, Link, Redirect, NavLink } from 'react-router-dom';
 import Calculadora from './calculadora';
-
+import Blog from './blog';
+import { Notificaciones } from './notificaciones';
 class Cabecera extends React.Component {
   constructor(props) {
     super(props);
@@ -90,22 +91,28 @@ function Header() {
     <Navbar.Collapse id="basic-navbar-nav">
       <Nav className="me-auto">
           <Nav.Item>
-            <Link to="/">Inicio</Link>
+            <NavLink className="nav-link" to="/">Inicio</NavLink>
           </Nav.Item>
           <Nav.Item>
-            <Link to="/demos">demos</Link>
+            <NavLink className="nav-link" to="/demos">demos</NavLink>
           </Nav.Item>
           <Nav.Item>
-            <Link to="/chisme/de/hacer/numeros">calculadora 1</Link>
+            <NavLink className="nav-link" to="/chisme/de/hacer/numeros">calculadora 1</NavLink>
           </Nav.Item>
           <Nav.Item>
-            <Link to="/muro">muro</Link>
+            <NavLink className="nav-link" to="/muro">muro</NavLink>
           </Nav.Item>
           <Nav.Item>
-            <Link to="/calculadora">calculadora 2</Link>
+            <NavLink className="nav-link" to="/calculadora">calculadora 2</NavLink>
           </Nav.Item>
           <Nav.Item>
-            <Link to="/falsa">falsa</Link>
+            <NavLink className="nav-link" to="/falsa">falsa</NavLink>
+          </Nav.Item>
+          <Nav.Item>
+            <NavLink className="nav-link" to="/concache">con cache</NavLink>
+          </Nav.Item>
+          <Nav.Item>
+            <NavLink className="nav-link" to="/sincache">sin cache</NavLink>
           </Nav.Item>
       </Nav>
     </Navbar.Collapse>
@@ -120,14 +127,17 @@ class App extends React.Component {
     return (
       <Router>
         <Header />
+        <Notificaciones />
         <main className="container-fluid">
           <Switch>
-            <Route path="/" component={Demo} exact />
             <Route path="/demos" component={Demo} exact />
             <Route path="/chisme/de/hacer/numeros" render={() => <Calculadora coma={true} />} exact />
+            <Route path="/concache" component={CounterStored} exact />
+            <Route path="/sincache" render={() => <Contador init={10} />} exact />
             <Route path="/muro/:page" component={FotoMuro} exact />
-            <Redirect from="/muro" to="/muro/0" />
+            <Redirect from="/muro" to="/muro/5" />
             <Redirect from="/calculadora" to="/chisme/de/hacer/numeros" />
+            <Route path="/" component={Demo} exact />
             <Route component={PageNotFound} exact />
           </Switch>
         </main>

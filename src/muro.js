@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import Contador from "./contador";
 import Pagination from 'react-bootstrap/Pagination';
 import { Esperando } from './comunes';
+import * as MyStore from './my-store';
 
 class FotoCard extends Component {
   render() {
@@ -33,7 +34,7 @@ class FotoButton extends Component {
   render() {
     return (
       <React.Fragment>
-        { this.props.onSelecciona &&
+        {this.props.onSelecciona &&
           <button
             style={this.props.tamaño}
             onClick={ev => { ev.stopPropagation(); this.props.onSelecciona(); return false; }} >
@@ -44,235 +45,250 @@ class FotoButton extends Component {
   }
 }
 
-export default class FotoMuro extends Component {
-  constructor(props) {
-    super(props);
-    const max = 10;
-    // const t = (new Array(max)).fill(null, 0, max);
-    // for (let i = 0; i < t.length; i++) {
-    //   t[i] = new Array(max).fill(null, 0, max);
-    // }
-    this.state = { listado: (new Array(max)).fill(null, 0, max).map(() => new Array(max).fill(null, 0, max)), 
-      dim: 128, 
-      loading: false,
-      page: 0,
-     };
-     this.pide = this.pide.bind(this);
-  }
-  cambia(f, c) {
-    this.setState(prev => {
-      let alea = Math.floor(Math.random() * 1000);
-      prev.listado[f][c] = `https://picsum.photos/id/${alea}/512/512`;
-      return { listado: prev.listado };
-    });
-  }
-  anula(f, c) {
-    this.setState(prev => {
-      prev.listado[f][c] = null;
-      return { listado: prev.listado };
-    });
-  }
-  pide(nueva) {
-    this.setState({page: nueva })
-    this.carga();
-  }
-  carga() {
-    this.setState({loading: true })
-    fetch('https://picsum.photos/v2/list?page='+this.state.page+'&limit=10').then(
-      data => {
-        let rslt = [];
-        data.json().then(datos => {
-          for(let i = 0; i < 1; i++) {
-            rslt[i] = [];
-            for(let j = 0; j < 10; j++) {
-              rslt[i][j] = datos[i*10 + j].download_url;
-            }
-            this.setState({listado: rslt, loading: false })
-          }
-        })
-      },
-      err => {
-        this.setState({loading: false })
-      }
-    )
-
-  }
-  componentDidMount() {
-    // this.intervalo = setInterval(() => {
-    //   console.log('tic')
-    //   const f = Math.floor(Math.random() * this.state.listado.length);
-    //   const c = Math.floor(Math.random() * this.state.listado[0].length);
-    //   if (!this.state.listado[f][c]) this.cambia(f, c);
-    // }, 1000);
-    this.carga();
-  }
-
-  componentWillUnmount() {
-    // clearInterval(this.intervalo);
-  }
-
-  render() {
-    // if(this.state.listado[0][0]) throw new Error("Forzado");
-      if(this.state.loading)
-        return <Esperando />
-
-    const tamaño = {
-      height: this.state.dim,
-      width: this.state.dim,
-      fontSize: this.state.dim / 64 + "em"
-    };
-    const rslt = this.state.listado.map((fila, index) => {
-      return (
-        <div className="row" key={"F" + index.toString()}>
-          {fila.map((celda, subindex) => (
-            <div
-              className="col"
-              key={"F" + index.toString() + "C" + subindex.toString()} >
-              {celda ? (
-                <FotoCard
-                  foto={celda}
-                  titulo={index + 1 + "-" + (subindex + 1)}
-                  dim={this.state.dim}
-                  onSelecciona={this.anula.bind(this, index, subindex)} >
-                  Descargado de {celda}
-                </FotoCard>
-              ) : (
-                  <FotoButton tamaño={tamaño}
-                    onSelecciona={this.cambia.bind(this, index, subindex)} >
-                    {index + 1 + "-" + (subindex + 1)}
-                  </FotoButton>
-                )}
-            </div>
-          ))}
-        </div>
-      );
-    });
-    return (
-      <div>
-        <Contador init={this.state.dim} delta={32} min={32} max={512} onCambia={rslt => this.setState({ dim: rslt })} />
-        <Contador init={this.state.page} onCambia= {this.pide} />
-        <div className="container-fluid">{rslt}</div>
-      </div>
-    );
-  }
-
-}
-
 // export default class FotoMuro extends Component {
 //   constructor(props) {
 //     super(props);
-//     this.state = {
-//       listado: null, elemento: {
-//         "id": "",
-//         "author": "",
-//         "width": "",
-//         "height": "",
-//         "url": "",
-//         "download_url": ""
-//       }, dim: 256, pagina: 0, cargando: true, edicion: false
-//     };
+//     const max = 10;
+//     // const t = (new Array(max)).fill(null, 0, max);
+//     // for (let i = 0; i < t.length; i++) {
+//     //   t[i] = new Array(max).fill(null, 0, max);
+//     // }
+//     this.state = { listado: (new Array(max)).fill(null, 0, max).map(() => new Array(max).fill(null, 0, max)), 
+//       dim: 128, 
+//       loading: false,
+//       page: 0,
+//      };
+//      this.pide = this.pide.bind(this);
 //   }
 //   cambia(f, c) {
 //     this.setState(prev => {
-//       prev.listado[f][c].visible = true;
+//       let alea = Math.floor(Math.random() * 1000);
+//       prev.listado[f][c] = `https://picsum.photos/id/${alea}/512/512`;
 //       return { listado: prev.listado };
 //     });
 //   }
 //   anula(f, c) {
 //     this.setState(prev => {
-//       prev.listado[f][c].visible = false;
+//       prev.listado[f][c] = null;
 //       return { listado: prev.listado };
 //     });
 //   }
-//   componentDidMount() {
-//     this.cargaRemota();
+//   pide(nueva) {
+//     this.setState({page: nueva })
+//     this.carga();
 //   }
-
-//   cargaRemota(page = 0) {
-//     const lst = [];
-//     let nextColumna = 11;
-//     this.setState({ listado: null, pagina: page, cargando: true });
-
-//     fetch(`https://picsum.photos/v2/list?page=${page}&limit=100`)
-//       .then(response => {
-//         if (response.ok)
-//           response.json().then(data => {
-//             for (let item of data) {
-//               item.visible = false;
-//               if (nextColumna >= 10) {
-//                 lst[lst.length] = [];
-//                 nextColumna = 0;
-//               }
-//               lst[lst.length - 1][nextColumna++] = item;
+//   carga() {
+//     this.setState({loading: true })
+//     fetch('https://picsum.photos/v2/list?page='+this.state.page+'&limit=10').then(
+//       data => {
+//         let rslt = [];
+//         data.json().then(datos => {
+//           for(let i = 0; i < 1; i++) {
+//             rslt[i] = [];
+//             for(let j = 0; j < 10; j++) {
+//               rslt[i][j] = datos[i*10 + j].download_url;
 //             }
-//             this.setState({ listado: lst, cargando: false });
-//           });
-//       });
+//             this.setState({listado: rslt, loading: false })
+//           }
+//         })
+//       },
+//       err => {
+//         this.setState({loading: false })
+//       }
+//     )
+
 //   }
-//   cargaUno(id) {
-//     this.setState({ cargando: true });
-//     fetch(`https://picsum.photos/id/${id}/info`)
-//       .then(response => {
-//         if (response.ok)
-//           response.json().then(data => {
-//             this.setState({ elemento: data, cargando: false, edicion: true });
-//           });
-//       });
+//   componentDidMount() {
+//     // this.intervalo = setInterval(() => {
+//     //   console.log('tic')
+//     //   const f = Math.floor(Math.random() * this.state.listado.length);
+//     //   const c = Math.floor(Math.random() * this.state.listado[0].length);
+//     //   if (!this.state.listado[f][c]) this.cambia(f, c);
+//     // }, 1000);
+//     this.carga();
+//   }
+
+//   componentWillUnmount() {
+//     // clearInterval(this.intervalo);
 //   }
 
 //   render() {
 //     // if(this.state.listado[0][0]) throw new Error("Forzado");
-//     if (!this.state.listado)
-//       return <Esperando />
-//     if(this.state.edicion)
-//       return <FotoForm elemento={this.state.elemento} onCancel={()=>this.setState({ edicion: false })} />
+//       if(this.state.loading)
+//         return <Esperando />
+
 //     const tamaño = {
 //       height: this.state.dim,
 //       width: this.state.dim,
-//       fontSize: this.state.dim / 128 + "em"
+//       fontSize: this.state.dim / 64 + "em"
 //     };
-//     const rslt = this.state.listado.map((fila, index) => fila.map((celda, subindex) => 
-//           (
+//     const rslt = this.state.listado.map((fila, index) => {
+//       return (
+//         <div className="row" key={"F" + index.toString()}>
+//           {fila.map((celda, subindex) => (
 //             <div
 //               className="col"
-//               key={celda.id} >
-//               {celda.visible ? (
+//               key={"F" + index.toString() + "C" + subindex.toString()} >
+//               {celda ? (
 //                 <FotoCard
-//                   foto={`https://picsum.photos/id/${celda.id}/512/512`}
-//                   titulo={`${celda.id} - ${celda.author}`}
+//                   foto={celda}
+//                   titulo={index + 1 + "-" + (subindex + 1)}
 //                   dim={this.state.dim}
 //                   onSelecciona={this.anula.bind(this, index, subindex)} >
-//                   Tamaño: {celda.height} x {celda.width}<br />
-//                     Descarga: <a href={celda.download_url} target="_blank" rel="noopener noreferrer">{celda.download_url}</a>
-//                   <button className="btn btn-link" onClick={ev => this.cargaUno(celda.id)} >Editar</button>
+//                   Descargado de {celda}
 //                 </FotoCard>
 //               ) : (
 //                   <FotoButton tamaño={tamaño}
 //                     onSelecciona={this.cambia.bind(this, index, subindex)} >
-//                     {`${celda.id} - ${celda.author}`}
+//                     {index + 1 + "-" + (subindex + 1)}
 //                   </FotoButton>
 //                 )}
 //             </div>
-//           )
-//         // </div>
-//       ));
+//           ))}
+//         </div>
+//       );
+//     });
 //     return (
-//       <div style={{ overflow: 'hidden' }}>
+//       <div>
 //         <Contador init={this.state.dim} delta={32} min={32} max={512} onCambia={rslt => this.setState({ dim: rslt })} />
-//         <Pagination aria-label="Page navigation">
-//           <Pagination.First onClick={ev => this.cargaRemota(0)} />
-//           {(new Array(...'01234567890')).map((item, index) =>
-//               <Pagination.Item key={index} active={this.state.pagina === index} activeLabel="" onClick={ev => this.cargaRemota(index)}>{index + 1}</Pagination.Item>
-//             )}
-//           <Pagination.Last onClick={ev => this.cargaRemota(10)} />
-//         </Pagination>
-//         {/* <FotoForm elemento={this.state.elemento} /> */}
-//         <div className="row">{rslt}</div>
+//         <Contador init={this.state.page} onCambia= {this.pide} />
+//         <div className="container-fluid">{rslt}</div>
 //       </div>
 //     );
 //   }
 
 // }
+
+export default class FotoMuro extends Component {
+  constructor(props) {
+    super(props);
+    let pagina = props.match.params.page ? props.match.params.page : 0;
+    this.state = {
+      listado: null, elemento: {
+        "id": "",
+        "author": "",
+        "width": "",
+        "height": "",
+        "url": "",
+        "download_url": ""
+      }, dim: 256, pagina: pagina, cargando: true, edicion: false
+    };
+  }
+  cambia(f, c) {
+    this.setState(prev => {
+      prev.listado[f][c].visible = true;
+      return { listado: prev.listado };
+    });
+  }
+  anula(f, c) {
+    this.setState(prev => {
+      prev.listado[f][c].visible = false;
+      return { listado: prev.listado };
+    });
+  }
+  componentDidMount() {
+    this.carga(this.state.pagina);
+  }
+
+  carga(page = 0) {
+    const lst = [];
+    let nextColumna = 11;
+    this.setState({ listado: null, pagina: page, cargando: true });
+    MyStore.CounterUpCmd();
+
+    fetch(`https://picsum.photos/v2/list?page=${page}&limit=100`)
+      .then(response => {
+        if (response.ok) {
+          response.json().then(data => {
+            MyStore.AddNotifyCmd("Cargo página: " + page + ".");
+            for (let item of data) {
+              item.visible = false;
+              if (nextColumna >= 10) {
+                lst[lst.length] = [];
+                nextColumna = 0;
+              }
+              lst[lst.length - 1][nextColumna++] = item;
+            }
+            this.setState({ listado: lst, cargando: false });
+          });
+        } else {
+          this.setState({ cargando: false });
+          MyStore.AddNotifyCmd(`HTTP ERROR: ${response.status}`);
+          //MyStore.AddErrNotifyCmd(response.error);
+        }
+      },
+        err => {
+          this.setState({ cargando: false });
+          MyStore.AddErrNotifyCmd(err);
+        });
+  }
+  cargaUno(id) {
+
+    this.setState({ cargando: true });
+    fetch(`https://picsum.photos/id/${id}/info`)
+      .then(response => {
+        if (response.ok)
+          response.json().then(data => {
+            this.setState({ elemento: data, cargando: false, edicion: true });
+          });
+      });
+  }
+
+  render() {
+    // if(this.state.listado[0][0]) throw new Error("Forzado");
+    if (this.state.cargando)
+      return <Esperando />
+    if (!this.state.listado)
+      return <h1>No hay fotos</h1>
+    if (this.state.edicion)
+      return <FotoForm elemento={this.state.elemento} onCancel={() => this.setState({ edicion: false })} />
+    const tamaño = {
+      height: this.state.dim,
+      width: this.state.dim,
+      fontSize: this.state.dim / 128 + "em"
+    };
+    const rslt = this.state.listado.map((fila, index) => fila.map((celda, subindex) =>
+    (
+      <div
+        className="col"
+        key={celda.id} >
+        {celda.visible ? (
+          <FotoCard
+            foto={`https://picsum.photos/id/${celda.id}/512/512`}
+            titulo={`${celda.id} - ${celda.author}`}
+            dim={this.state.dim}
+            onSelecciona={this.anula.bind(this, index, subindex)} >
+            Tamaño: {celda.height} x {celda.width}<br />
+            Descarga: <a href={celda.download_url} target="_blank" rel="noopener noreferrer">{celda.download_url}</a>
+            <button className="btn btn-link" onClick={ev => this.cargaUno(celda.id)} >Editar</button>
+          </FotoCard>
+        ) : (
+          <FotoButton tamaño={tamaño}
+            onSelecciona={this.cambia.bind(this, index, subindex)} >
+            {`${celda.id} - ${celda.author}`}
+          </FotoButton>
+        )}
+      </div>
+    )
+      // </div>
+    ));
+    return (
+      <div style={{ overflow: 'hidden' }}>
+        <Contador init={this.state.dim} delta={32} min={32} max={512} onCambia={rslt => this.setState({ dim: rslt })} />
+        <Pagination aria-label="Page navigation">
+          <Pagination.First onClick={ev => this.carga(0)} />
+          {(new Array(...'01234567890')).map((item, index) =>
+            <Pagination.Item key={index} active={this.state.pagina === index} activeLabel="" onClick={ev => this.carga(index)}>{index + 1}</Pagination.Item>
+          )}
+          <Pagination.Last onClick={ev => this.carga(10)} />
+        </Pagination>
+        {/* <FotoForm elemento={this.state.elemento} /> */}
+        <div className="row">{rslt}</div>
+      </div>
+    );
+  }
+
+}
 
 class FotoForm extends React.Component {
   constructor(props) {

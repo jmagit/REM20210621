@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types';
-import Contador, { ContadorFunc } from './contador';
+import Contador, { ContadorFunc, CounterStored } from './contador';
 import Calculadora from './calculadora';
 import { ErrorBoundary, Coordenadas, useCoordenadas } from './comunes';
 import { Link } from 'react-router-dom';
+import * as MyStore from './my-store';
 
 
 function Saluda(props) {
@@ -51,14 +52,26 @@ Despide.defaultProps = {
 export default class Demo extends Component {
     constructor(props) {
         super(props);
-        this.state = { resultado: 10 };
+        this.state = { resultado: 10, otro: 10 };
+        this.unsuscriptor = null;
+    }
+
+    componentDidMount() {
+        this.unsuscriptor = MyStore.store.subscribe(() => this.setState({otro: MyStore.store.getState().contador}))
+    }
+    componentWillUnmount() {
+        if(this.unsuscriptor) this.unsuscriptor();
     }
     render() {
         return (
             <React.Fragment>
+                <CounterStored />
+                Store: {this.state.otro}
+                <input type="button" value="Init" onClick={() => { MyStore.InitStoreCmd(); }} />
+                <input type="button" value="Notify" onClick={() => { MyStore.store.AddNotify("Esto es una demo."); }} />
                 <Coordenadas />
-                <Link to="/muro">muro</Link> | 
-                <Link to="muro">mal</Link> | 
+                <Link to="/muro/7">muro</Link> |
+                <Link to="muro">mal</Link> |
                 <a href="/muro">Peor</a>
                 <ContadorFunc init={18} />
                 <Calculadora coma={true} />

@@ -1,5 +1,7 @@
 import React, { Component, useState } from 'react'
 import PropTypes from 'prop-types';
+import { connect } from "react-redux";
+import * as MyStore from './my-store';
 
 export default class Contador extends Component {
     constructor(props) {
@@ -62,3 +64,28 @@ Contador.propTypes = {
     );
   }
   
+const counterStored = ({ contador, onSube, onBaja }) => (
+  <div>
+    <h1>{contador}</h1>
+    <p>
+      <button onClick={onSube}>Sube</button>&nbsp;{" "}
+      <button onClick={onBaja}>Baja</button>
+    </p>
+  </div>
+);
+
+export const CounterStored = connect(
+  (state, ownProps) => {
+    return {
+      contador: state.contador
+    };
+  },
+  (dispatch, ownProps) => {
+    return {
+      onSube: () => {
+        dispatch(MyStore.CounterUpAction());
+      },
+      onBaja: MyStore.CounterDownCmd
+    };
+  }
+)(counterStored);
