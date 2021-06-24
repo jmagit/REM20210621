@@ -122,6 +122,8 @@ export default class Blog extends Component {
             listado={this.state.listado}
             onAdd={this.add.bind(this)}
             onView={this.view.bind(this)}
+            onEdit={this.edit.bind(this)}
+            onDelete={this.remove.bind(this)}
           />
         )}
         {this.state.modo === "view" && (
@@ -173,7 +175,7 @@ class BlogLst extends Component {
           <div className="col-md-6 px-0">
             <h1 className="display-4 font-italic">{ultimo.titulo}</h1>
             <p className="lead my-3">
-              {this.elipsis(this.striptags(ultimo.texto), 100)}
+              {this.elipsis(ultimo.texto, 100)}
             </p>
             <p className="lead mb-0">
               <button

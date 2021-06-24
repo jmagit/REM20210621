@@ -100,6 +100,9 @@ function Header() {
             <NavLink className="nav-link" to="/chisme/de/hacer/numeros">calculadora 1</NavLink>
           </Nav.Item>
           <Nav.Item>
+            <NavLink className="nav-link" to="/blog">blog</NavLink>
+          </Nav.Item>
+          <Nav.Item>
             <NavLink className="nav-link" to="/muro">muro</NavLink>
           </Nav.Item>
           <Nav.Item>
@@ -131,6 +134,7 @@ class App extends React.Component {
         <main className="container-fluid">
           <Switch>
             <Route path="/demos" component={Demo} exact />
+            <Route path="/blog" component={Blog} exact />
             <Route path="/chisme/de/hacer/numeros" render={() => <Calculadora coma={true} />} exact />
             <Route path="/concache" component={CounterStored} exact />
             <Route path="/sincache" render={() => <Contador init={10} />} exact />
