@@ -5,6 +5,7 @@ import Calculadora from './calculadora';
 import { ErrorBoundary, Coordenadas, useCoordenadas } from './comunes';
 import { Link } from 'react-router-dom';
 import * as MyStore from './my-store';
+import axios from "axios";
 
 
 function Saluda(props) {
@@ -69,6 +70,7 @@ export default class Demo extends Component {
                 Store: {this.state.otro}
                 <input type="button" value="Init" onClick={() => { MyStore.InitStoreCmd(); }} />
                 <input type="button" value="Notify" onClick={() => { MyStore.store.AddNotify("Esto es una demo."); }} />
+                <input type="button" value="REST" onClick={() => { axios.get('http://localhost:4321/api/blog').then(resp => {}) }} />
                 <Coordenadas />
                 <Link to="/muro/7">muro</Link> |
                 <Link to="muro">mal</Link> |

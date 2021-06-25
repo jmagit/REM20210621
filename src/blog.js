@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
+import { Link } from 'react-router-dom';
 
 import { ValidationMessage, Esperando, ErrorMessage } from "./comunes";
 
@@ -81,7 +82,9 @@ export default class Blog extends Component {
   }
 
   cancel() {
-    this.list();
+    // this.list();
+    this.props.history.push('/blog');
+    // this.props.history.goBack(); 
   }
   send() {
     // eslint-disable-next-line default-case
@@ -153,8 +156,27 @@ export default class Blog extends Component {
       </div>
     );
   }
+  decodeRuta() {
+    if (this.props.match.url === this.urlActual) return;
+    this.urlActual = this.props.match.url;
+    if (this.props.match.params.id) {
+      if (this.props.match.url.endsWith('/edit'))
+        this.edit(this.props.match.params.id);
+      else
+        this.view(this.props.match.params.id);
+    } else {
+      if (this.props.match.url.endsWith('/add'))
+        this.add();
+      else
+        this.list();
+    }
+  }
+
   componentDidMount() {
-    this.list();
+    this.decodeRuta();
+  }
+  componentDidUpdate() {
+    this.decodeRuta();
   }
 }
 class BlogLst extends Component {
@@ -168,7 +190,7 @@ class BlogLst extends Component {
   }
   render() {
     let ultimo = this.props.listado[this.props.listado.length - 1];
-    if(!ultimo) return null;
+    if (!ultimo) return null;
     return (
       <div>
         <div className="jumbotron p-3 p-md-5 text-white rounded bg-dark">
@@ -197,6 +219,7 @@ class BlogLst extends Component {
           >
             Añadir
           </button>
+          <Link className="btn btn-link btn-outline-danger" to="/blog/add">Add</Link>
         </h1>
         <div className="row mb-2">
           {this.props.listado.map(item => (
@@ -226,6 +249,8 @@ class BlogLst extends Component {
                   >
                     Leer mas
                   </button>
+                  <Link className="btn btn-link btn-outline-danger" to={`/blog/${item.id}`}>view</Link>
+                  <Link className="btn btn-link btn-outline-danger" to={`/blog/${item.id}/edit`}>edit</Link>
                 </div>
                 {item.fotourl && (
                   <img

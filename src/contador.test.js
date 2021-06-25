@@ -2,7 +2,7 @@ import { unmountComponentAtNode } from "react-dom";
 import { act, render, screen, fireEvent } from '@testing-library/react';
 import Contador from './contador'
 
-describe('Contador como clase', () => {
+describe.skip('Contador como clase', () => {
     let cont = null;
     beforeEach(() => {
         cont = new Contador({ init: 10, delta: 2, min: 7, max: 13 });
@@ -24,7 +24,7 @@ describe('Contador como clase', () => {
     })
 })
 
-describe.only('Contador como componente', () => {
+describe('Contador como componente', () => {
     let container = null;
     beforeEach(() => {
         // configurar un elemento del DOM como objetivo del renderizado
@@ -63,7 +63,7 @@ describe.only('Contador como componente', () => {
         expect(comp.container.textContent).toBe("10");
         expect(comp.container.querySelector("h1").textContent).toBe("10");
     })
-    test('Baja', () => {
+    test('baja', () => {
         let comp;
         act(() => {
             comp = render(<Contador init={10} />, {container})

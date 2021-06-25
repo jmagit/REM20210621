@@ -8,11 +8,14 @@ import Contador, { CounterStored} from './contador';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import Container from 'react-bootstrap/Container';
-import Formulario from './formulario';
-import { BrowserRouter as Router, Switch, Route, Link, Redirect, NavLink } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route, Redirect, NavLink } from 'react-router-dom';
 import Calculadora from './calculadora';
 import Blog from './blog';
 import { Notificaciones } from './notificaciones';
+import { LoginComponent } from './security';
+import Personas from './personas';
+
+// eslint-disable-next-line no-unused-vars
 class Cabecera extends React.Component {
   constructor(props) {
     super(props);
@@ -103,6 +106,9 @@ function Header() {
             <NavLink className="nav-link" to="/blog">blog</NavLink>
           </Nav.Item>
           <Nav.Item>
+            <NavLink className="nav-link" to="/personas">personas</NavLink>
+          </Nav.Item>
+          <Nav.Item>
             <NavLink className="nav-link" to="/muro">muro</NavLink>
           </Nav.Item>
           <Nav.Item>
@@ -118,6 +124,7 @@ function Header() {
             <NavLink className="nav-link" to="/sincache">sin cache</NavLink>
           </Nav.Item>
       </Nav>
+      <LoginComponent />
     </Navbar.Collapse>
   </Container>
 </Navbar>;
@@ -134,7 +141,11 @@ class App extends React.Component {
         <main className="container-fluid">
           <Switch>
             <Route path="/demos" component={Demo} exact />
+            <Route path="/personas" component={Personas} exact />
             <Route path="/blog" component={Blog} exact />
+            <Route path="/blog/add" component={Blog} exact />
+            <Route path="/blog/:id" component={Blog} exact />
+            <Route path="/blog/:id/edit" component={Blog} exact />
             <Route path="/chisme/de/hacer/numeros" render={() => <Calculadora coma={true} />} exact />
             <Route path="/concache" component={CounterStored} exact />
             <Route path="/sincache" render={() => <Contador init={10} />} exact />

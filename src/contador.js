@@ -28,7 +28,7 @@ export default class Contador extends Component {
     render() {
         return (
             <div>
-                <h1>{this.state.contador}</h1>
+                <h1 data-testid="pantalla">{this.state.contador}</h1>
                 <p>
                     <input ref={this.btnBaja} type="button" value="-" onClick={this.baja} />
                     <input type="button" value="+" onClick={this.sube} />

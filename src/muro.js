@@ -303,7 +303,7 @@ class FotoForm extends React.Component {
   }
 
   shouldComponentUpdate(next_props, next_state) {
-    if (this.props.elemento.id != next_props.elemento.id) {
+    if (this.props.elemento.id !== next_props.elemento.id) {
       next_state.elemento = next_props.elemento;
     }
     return true;

@@ -28,7 +28,7 @@ export const CounterDownAction = () => ({ type: COUNTER_DOWN });
 
 // Notificaciones >>>>>>>>>>>>>>>>>>>>>>>>
 export const AddNotifyAction = data => ({ type: "ADD_NOTIFY", value: data });
-export const DeleteNotifyAction = index => ({ type: "DELETE_NOTIFY", index: index});
+export const DeleteNotifyAction = index => ({ type: "DELETE_NOTIFY", index: index });
 export const ClearNotifyAction = () => ({ type: "CLEAR_ALL_NOTIFY" });
 function notificationReducer(
   state = { listado: [], hayNotificaciones: false },
@@ -36,7 +36,7 @@ function notificationReducer(
 ) {
   switch (action.type) {
     case "ADD_NOTIFY":
-      if(!action.value) return state;
+      if (!action.value) return state;
       return Object.assign({}, state, {
         listado: [...state.listado, action.value],
         hayNotificaciones: true
@@ -59,22 +59,27 @@ function notificationReducer(
 }
 // Notificaciones <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-// Otro >>>>>>>>>>>>>>>>>>>>>>
-function OtroReducer(state = 0, action) {
-  // eslint-disable-next-line default-case
+// Auth >>>>>>>>>>>>>>>>>>>>>>
+function authReducer(state = { isAuth: false, authToken: '', name: '' }, action) {
   switch (action.type) {
+    case 'LOGIN':
+      return { isAuth: true, authToken: action.authToken, name: action.name };
+    case 'LOGOUT':
+    case INIT_STORE:
+      return { isAuth: false, authToken: '', name: '' };
     default:
       return state;
-    case INIT_STORE:
-      return 0;
   }
 }
-// Otro <<<<<<<<<<<<<<<<<<<<<<<<<<
+
+export const LoginAction = (authToken, name) => ({ type: 'LOGIN', authToken, name });
+export const LogoutAction = () => ({ type: 'LOGOUT' });
+// Auth <<<<<<<<<<<<<<<<<<<<<<<<<<
 
 const globalReducer = combineReducers({
   notify: notificationReducer,
   contador: contadorReducer,
-  otro: OtroReducer
+  auth: authReducer
 });
 
 const initialState = { contador: 10 };
@@ -100,5 +105,9 @@ export const AddErrNotifyCmd = error => {
   }
   AddNotifyCmd("ERROR: " + msg);
 };
-export const DeleteNotifCmd = index => store.dispatch(DeleteNotifyAction(index));
+export const DeleteNotifyCmd = index => store.dispatch(DeleteNotifyAction(index));
 export const ClearNotifyCmd = () => store.dispatch(ClearNotifyAction());
+
+export const LoginCmd = (authToken, name) => store.dispatch(LoginAction(authToken, name));
+export const LogoutCmd = () => store.dispatch(LogoutAction());
+
